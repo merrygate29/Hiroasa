@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>生成AI活用事例集</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>生成AI活用事例集</h1>
+  <div id="controls">
+    <label>カテゴリ:
+      <select id="categorySelect">
+        <option value="">すべて</option>
+      </select>
+    </label>
+    <label>キーワード:
+      <input type="text" id="keywordInput" placeholder="キーワードで検索">
+    </label>
+    <button id="searchButton">検索</button>
+  </div>
+  <table id="results">
+    <thead>
+      <tr><th>タイトル</th><th>カテゴリ</th><th>説明</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script src="script.js"></script>
+</body>
+</html>
