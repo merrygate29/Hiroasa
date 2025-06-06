@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+#controls { margin-bottom: 20px; }
+#results { border-collapse: collapse; width: 100%; }
+#results th, #results td { border: 1px solid #ccc; padding: 8px; }
