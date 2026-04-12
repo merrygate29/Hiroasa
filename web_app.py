@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import html
 import sqlite3
+import webbrowser
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
@@ -77,6 +78,14 @@ def fetch_events(limit: int = 100) -> list[sqlite3.Row]:
             """,
             (limit,),
         ).fetchall()
+
+
+def ensure_seeded_if_empty() -> int:
+    with get_conn() as conn:
+        count = conn.execute("SELECT COUNT(*) FROM monitors").fetchone()[0]
+        if count == 0:
+            return monitor_app.seed_defaults(conn)
+        return 0
 
 
 def add_monitor(form: dict[str, list[str]]) -> None:
@@ -267,14 +276,24 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--db", default=DB_PATH)
+    parser.add_argument("--no-open-browser", action="store_true", help="do not auto-open browser")
     args = parser.parse_args()
     DB_PATH = args.db
 
     with get_conn() as conn:
         monitor_app.init_db(conn)
+    seeded = ensure_seeded_if_empty()
 
     server = ThreadingHTTPServer((args.host, args.port), Handler)
-    print(f"Web UI started: http://{args.host}:{args.port}")
+    url = f"http://{args.host}:{args.port}"
+    print(f"Web UI started: {url}")
+    if seeded:
+        print(f"Initial monitors seeded: {seeded}")
+    if not args.no_open_browser:
+        try:
+            webbrowser.open(url, new=2)
+        except Exception:
+            pass
     try:
         server.serve_forever()
     except KeyboardInterrupt:
